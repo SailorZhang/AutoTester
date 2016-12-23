@@ -1,0 +1,26 @@
+{
+  "name": "mycucumber",
+  "version": "1.0.0",
+  "description": "cucumber bdd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cucumber": "cucumber-js",
+    "webdriver-update": "webdriver-manager update",
+    "webdriver-start": "webdriver-manager start"
+  },
+  "keywords": [
+    "cucumber",
+    "bdd"
+  ],
+  "author": "Sailor",
+  "license": "MIT",
+  "devDependencies": {
+    "chromedriver": "^2.25.1",
+    "cucumber": "^2.0.0-rc.5",
+    "protractor": "^4.0.14",
+    "selenium-webdriver": "^3.0.1",
+    "webdriver-manager": "^10.2.7",
+    "zombie": "^5.0.2"
+  }
+}
