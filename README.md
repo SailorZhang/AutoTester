@@ -1,2 +1,2 @@
 # cucumber-js
-cucumber, selenium-webdriver
+using cucumber 2.x and protracot impl automation test.
