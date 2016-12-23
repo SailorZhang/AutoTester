@@ -11,6 +11,8 @@ function CustomWorld() {
 		.build();
 
 	driver.manage().timeouts().setScriptTimeout(11000);
+
+	this.wb = driver;
 	this.driver = protractor.wrapDriver(driver);
 	// this.driver.ignoreSynchronization = true;
 	this.by = ProtractorBrowser.By;
