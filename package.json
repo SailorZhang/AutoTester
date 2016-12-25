@@ -19,7 +19,7 @@
     "chromedriver": "^2.25.1",
     "cucumber": "^2.0.0-rc.5",
     "protractor": "^4.0.14",
-    "selenium-webdriver": "^3.0.1",
+    "selenium-webdriver": "^2.53.3",
     "webdriver-manager": "^10.2.7",
     "zombie": "^5.0.2"
   }
