@@ -2,7 +2,6 @@ require('chromedriver');
 var seleniumWebdriver = require('selenium-webdriver');
 var {defineSupportCode} = require('cucumber');
 var protractor = require('protractor');
-var {ProtractorBrowser} = require('protractor');
 
 function CustomWorld() {
 
@@ -15,9 +14,7 @@ function CustomWorld() {
 	this.wb = driver;
 	this.driver = protractor.wrapDriver(driver);
 	// this.driver.ignoreSynchronization = true;
-	this.by = ProtractorBrowser.By;
-
-
+	// this.by = ProtractorBrowser.By;
 }
 
 defineSupportCode(function({setWorldConstructor}) {
