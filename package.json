@@ -22,5 +22,10 @@
     "selenium-webdriver": "^2.53.3",
     "webdriver-manager": "^10.2.7",
     "zombie": "^5.0.2"
+  },
+  "dependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "moment": "^2.17.1"
   }
 }
