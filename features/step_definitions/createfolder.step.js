@@ -28,7 +28,7 @@ defineSupportCode(function({Given, When, Then}) {
 	}
 
 	Given('I login CDL, I choose a contract.', function() {
-		this.login();
+		// this.login();
 		driver = this.driver;
 		element = driver.element;
 		EC = driver.ExpectedConditions;
