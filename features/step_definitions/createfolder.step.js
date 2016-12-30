@@ -32,11 +32,10 @@ defineSupportCode(function({Given, When, Then}) {
 		driver = this.driver;
 		element = driver.element;
 		EC = driver.ExpectedConditions;
-
-		driver.wait(EC.visibilityOf(element(by.id('notificationsModal'))));
-		element(by.id('notificationsModal'))
-			.element(by.tagName('button'))
-			.click();
+		
+		var closeButton = element(by.id('notificationsModal')).element(by.tagName('button'));
+		driver.wait(EC.elementToBeClickable(closeButton));
+		closeButton.click();
 
 		driver.wait(EC.invisibilityOf(element(by.id('notificationsModal'))));
 		return element(by.linkText('Favorite Contract Libraries')).click();
@@ -59,9 +58,7 @@ defineSupportCode(function({Given, When, Then}) {
 
 		var xpath = "//div[text()='" + folderName + "']";
 
-		driver.findElement(by.xpath(xpath)).then((ele) => {
-			expect(ele.getText()).eventually.equal(folderName).notify(callback);
-		});
+		expect(element(by.xpath(xpath)).getText()).eventually.equal(folderName).notify(callback);
 	});
 
 	When('I create a folder, I open this new folder, the new folder files count is {arg1:int}.'
@@ -69,14 +66,13 @@ defineSupportCode(function({Given, When, Then}) {
 
 		driver.wait(EC.elementToBeClickable(element(by.repeater('record in home.viewData').row(0))));
 		element(by.repeater('record in home.viewData').row(0)).click();
-		
+
 		createFolder();
 
 		var xpath = "//div[text()='" + folderName + "']";
 
-		driver.findElement(by.xpath(xpath)).then(function(ele) {
-			driver.actions().mouseMove(ele).doubleClick().perform();
-		});
+		var ele = element(by.xpath(xpath));
+		driver.actions().mouseMove(ele).doubleClick().perform();
 
 		return element.all(by.repeater('record in filteredRecords')).count().then(function(c) {
 			expect(c).to.equal(arg1);
@@ -94,9 +90,7 @@ defineSupportCode(function({Given, When, Then}) {
 			expect(c).to.equal(arg1);
 		});
 
-		driver.findElement(by.xpath(xpath)).then((ele) => {
-			expect(ele.getText()).eventually.equal(folderName).notify(callback);
-		});
+		expect(element(by.xpath(xpath)).getText()).eventually.equal(folderName).notify(callback);
 	})
 
 });
