@@ -1,27 +1,39 @@
-var seleniumWebdriver = require('selenium-webdriver');
-var {until,By} = require('selenium-webdriver');
-var {By:by} = require('protractor').ProtractorBrowser;
-var {defineSupportCode} = require('cucumber');
-var moment = require('moment');
-var chai = require('chai');
-var chaiAsPromised = require('chai-as-promised');
-var should = require('chai').should();
-var {expect} = require('chai');
+const seleniumWebdriver = require('selenium-webdriver');
+const {until,By} = require('selenium-webdriver');
+const {By:by} = require('protractor').ProtractorBrowser;
+const {defineSupportCode} = require('cucumber');
+const moment = require('moment');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
+const should = require('chai').should();
+const {expect} = require('chai');
 
 chai.use(chaiAsPromised);
 
 defineSupportCode(function({Given, When, Then}) {
-	Given('I am on the Cucumber.js GitHub repository', function() {
-		return this.login();
-	});
+	let folderName;
+	let count = 0;
+	let driver;
+	let element;
+	let EC;
 
-	When('I click on {stringInDoubleQuotes}', function(text) {
-		var driver = this.driver;
-		var element = driver.element;
-		var EC = driver.ExpectedConditions;
+	function createFolder(){
+		driver.wait(EC.elementToBeClickable(driver.$$('.cdmRecords-button').get(1)));
+		driver.$$('.cdmRecords-button').get(1).click();
+		folderName = "Auto" + moment().format("YYYYMMDDhmmssSSS");
+		element.all(by.model('newFolderName')).get(1).sendKeys(folderName);
+
+		element.all(by.name('newFolderForm')).get(1).element(by.partialButtonText('OK')).click();
+		return driver.wait(EC.elementToBeClickable(element(by.repeater('record in filteredRecords').row(0))));
+	}
+
+	Given('I login CDL, I choose a contract.', function() {
+		this.login();
+		driver = this.driver;
+		element = driver.element;
+		EC = driver.ExpectedConditions;
 
 		driver.wait(EC.visibilityOf(element(by.id('notificationsModal'))));
-		// .then(function() {
 		element(by.id('notificationsModal'))
 			.element(by.tagName('button'))
 			.click();
@@ -30,40 +42,61 @@ defineSupportCode(function({Given, When, Then}) {
 		return element(by.linkText('Favorite Contract Libraries')).click();
 	});
 
-	Then('I should see {stringInDoubleQuotes}', function(text, callback) {
-		var driver = this.driver;
-		var element = driver.element;
-		var EC = driver.ExpectedConditions;
-
+	When('I click on NewFolder button, and input folder name, click OK.', function() {
 		driver.wait(EC.elementToBeClickable(element(by.repeater('record in home.viewData').row(0))));
 		element(by.repeater('record in home.viewData').row(0)).click();
-		var count = 0;
 		element.all(by.repeater('record in filteredRecords')).count().then(function(c) {
 			count = c;
 		});
+		return createFolder();
+	});
 
-		driver.$$('.cdmRecords-button').get(1).click();
-		var folderName = "Auto" + moment().format("YYYYmmDDhmmssSSS");
-		element.all(by.model('newFolderName')).get(1).sendKeys(folderName);
-
-		element.all(by.name('newFolderForm')).get(1).element(by.partialButtonText('OK')).click();
-		driver.wait(EC.elementToBeClickable(element(by.repeater('record in filteredRecords').row(0))));
-
+	Then('I should see the input name of folder and total files count increase {arg1:int}.'
+		, function(increase,callback) {
 		element.all(by.repeater('record in filteredRecords')).count().then(function(c) {
-			// if (c != count + 2) {
-			expect(c).to.equal(count + 2);
-			// callback("create folder fail!");
-			// }
+			expect(c).to.equal(count + increase);
 		});
 
 		var xpath = "//div[text()='" + folderName + "']";
 
-		driver.findElement(by.xpath(xpath)).then(function(ele) {
-			// driver.actions().mouseMove(ele).doubleClick().perform(); //double click
-			// ele.click(); //click
+		driver.findElement(by.xpath(xpath)).then((ele) => {
 			expect(ele.getText()).eventually.equal(folderName).notify(callback);
 		});
-
-		// callback();
 	});
+
+	When('I create a folder, I open this new folder, the new folder files count is {arg1:int}.'
+		, function(arg1) {
+
+		driver.wait(EC.elementToBeClickable(element(by.repeater('record in home.viewData').row(0))));
+		element(by.repeater('record in home.viewData').row(0)).click();
+		
+		createFolder();
+
+		var xpath = "//div[text()='" + folderName + "']";
+
+		driver.findElement(by.xpath(xpath)).then(function(ele) {
+			driver.actions().mouseMove(ele).doubleClick().perform();
+		});
+
+		return element.all(by.repeater('record in filteredRecords')).count().then(function(c) {
+			expect(c).to.equal(arg1);
+		});
+	});
+
+	When('I create a sub folder in the new folder.',function(){
+		return createFolder();
+	});
+
+	Then('I should see the sub folder in the new folder and files count is {arg1:int}.',function(arg1,callback){
+		var xpath = "//div[text()='" + folderName + "']";
+
+		element.all(by.repeater('record in filteredRecords')).count().then(function(c) {
+			expect(c).to.equal(arg1);
+		});
+
+		driver.findElement(by.xpath(xpath)).then((ele) => {
+			expect(ele.getText()).eventually.equal(folderName).notify(callback);
+		});
+	})
+
 });
